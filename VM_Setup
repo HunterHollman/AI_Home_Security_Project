@@ -1,4 +1,4 @@
-# 🏠 Building My Home Cybersecurity Lab
+# 🏠 Building My Home Cybersecurity Lab and setting up VM's
 
 ### By Hunter Hollman
 
@@ -6,13 +6,13 @@
 
 ## 🚀 **Project Overview**
 
-I’m building a home cybersecurity lab to:
+
 
 - Develop hands-on skills in **firewall management** and **penetration testing**
 - Create a basic **Security Operations Center (SOC)**
 - Simulate **attack and defense scenarios** in a safe, isolated environment
 
-This guide details how I set up two VirtualBox VMs (Kali Linux and Windows 10 Pro), configured networking, and tested connectivity — including the challenges I faced and solutions I found.
+This guide details how I set up the two VirtualBox VMs (Kali Linux and Windows 10 Pro), configured networking, and tested connectivity — including the challenges I faced and solutions I found.
 
 ---
 
@@ -26,8 +26,9 @@ This guide details how I set up two VirtualBox VMs (Kali Linux and Windows 10 Pr
 |              |                   | Adapter 2: Internal Network   |                    |
 
 **Notes:**
+I needed isolated networks with different IP's but can communicate and have access to the internet.
 
-- **Adapter 1 (NAT):** Provides internet access for updates/tools.
+- **Adapter 1 (NAT): Provides internet access for updates/tools.
 - **Adapter 2 (Internal Network named `LAB-NET`):** Isolates VMs for secure interaction.
 
 ---
@@ -36,8 +37,8 @@ This guide details how I set up two VirtualBox VMs (Kali Linux and Windows 10 Pr
 
 ### Kali Linux
 
-1. Open terminal and find the internal interface name:
-   ```bash
+1. Opened terminal and found the internal interface name:
+   
    ip a
 
 Assign IP and activate interface 
@@ -54,15 +55,13 @@ IP address: 192.168.56.20
 
 Subnet mask: 255.255.255.0
 
-Leave gateway and DNS blank
+Left gateway and DNS blank
 
 ____________________________________
 
 🧪 Testing Connectivity
 Step 1: Ping Test from Kali
-bash
-Copy
-Edit
+
 ping 192.168.56.20
 Result:
 ❌ No reply (0 received) — Windows blocked ICMP Echo Requests by default.
