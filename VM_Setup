@@ -85,7 +85,72 @@ Ran this from Kali to scan Windows:
 nmap -sS -sV 192.168.56.20
 Discover open ports and services.
 
-Prepare for more advanced penetration testing.
+# 🔍 Windows VM Port Scanning & Firewall Discovery – Home SOC Lab
 
+After setting up my home cybersecurity lab with a Kali Linux attacker VM and a Windows 10 Pro target VM (both on VirtualBox using an **internal network named `LAB-NET`**), I moved on to scanning the Windows machine for open ports using Nmap.
+
+---
+
+## ⚙️ Network Setup Recap
+
+- **Kali VM IP:** `192.168.56.10`
+- **Windows VM IP:** `192.168.56.20`
+- Network type: **Internal Network** (VirtualBox)
+- Subnet: `255.255.255.0`
+- Gateway/DNS: _Left blank (isolated attack network)_
+
+Both VMs were confirmed to be communicating via ping after adjusting Windows Firewall settings to allow **ICMP Echo Requests**.
+
+---
+
+## 📌 Initial Nmap Scan
+
+Ran the following from Kali:
+
+```bash
+nmap -sS -sV 192.168.56.20
+❌ Result: No Open Ports
+This meant one (or more) of the following:
+
+🔒 Windows Firewall was blocking all inbound traffic
+
+❌ No services were actively listening on ports
+
+❌ Misconfiguration in the network (but ping worked, so this was ruled out)
+
+🔧 Firewall Troubleshooting
+To test the firewall theory, I temporarily disabled the Windows Defender Firewall for the Private Network:
+
+Control Panel → Windows Defender Firewall → Turn Windows Defender Firewall on or off
+✅ Turned OFF for Private Network
+
+🔁 Re-Scanning After Firewall Disabled
+
+nmap -sS -sV 192.168.56.20
+✅ Result: Open Ports Detected
+
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft RPC
+139/tcp  open  netbios-ssn   NetBIOS Session Service
+445/tcp  open  microsoft-ds  Microsoft Windows SMB
+MAC Address: <visible in output>
+
+
+🧠 What These Ports Mean
+Port	Protocol	Description
+135	RPC	Used for DCOM and remote service management
+139	NetBIOS	Legacy Windows file/print sharing over NetBIOS
+445	SMB	Server Message Block — used for file sharing, printer access, and remote admin
+
+These are common ports seen on Windows machines — but also frequently targeted in cyber attacks (ex: WannaCry exploited SMBv1 on port 445).
+
+| Step                                          | Outcome                                                 |
+| --------------------------------------------- | ------------------------------------------------------- |
+| Set up internal network (LAB-NET)             | ✅ Static IPs: Kali `192.168.56.10`, Win `192.168.56.20` |
+| Confirmed connectivity (ping)                 | ✅ After ICMP allowed in Windows Firewall                |
+| Initial Nmap scan                             | ❌ 0 open ports (due to firewall)                        |
+| Disabled Windows Firewall                     | ✅                                                       |
+| Second Nmap scan                              | ✅ Ports 135, 139, 445 visible                           |
+| Next up: Harden Windows & monitor connections | 🔜                                                      |
 
 
