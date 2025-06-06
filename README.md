@@ -59,11 +59,45 @@ This isn't just for show — this system protects my home network and acts as a 
 
 ###  Network Design
 
-| Subnet        | Purpose           |
-|---------------|-------------------|
-| `192.168.1.0` | Home / Trusted    |
-| `192.168.2.0` | IoT / Untrusted   |
-| `192.168.99.0`| Management VLAN   |
+## 🔧 Network Configuration Table
+
+| Component      | Adapter Type     | Network Name     | IP Address        | Purpose                                |
+|----------------|------------------|------------------|-------------------|----------------------------------------|
+| **Host PC**    | —                | —                | Dynamic (192.168.x.x) | Hosts VirtualBox; isolated from `LAB-NET` |
+| **Kali VM**    | Adapter 1: NAT   | NAT              | DHCP (dynamic)    | Internet access for tools/updates     |
+|                | Adapter 2: Internal | LAB-NET       | `192.168.56.10`   | Isolated attacker interface           |
+| **Windows VM** | Adapter 1: NAT   | NAT              | DHCP (dynamic)    | Internet for patching, RDP, etc.      |
+|                | Adapter 2: Internal | LAB-NET       | `192.168.56.20`   | Target machine, pentesting surface    |
+| **LAB-NET**    | Internal Only    | LAB-NET          | `192.168.56.0/24` | No internet, no host access           |
+
+---
+                    +----------------------+
+                    |      Host PC         |
+                    | (VirtualBox Host)    |
+                    +----------------------+
+                   [Internet Access via NAT]
+                      (hosted by VirtualBox)
+                              |
+                 +------------+------------+
+                 |                         |
+          +-------------+           +-------------+
+          |   Kali VM   |           | Windows VM  |
+          |-------------|           |-------------|
+          | Adapter 1:  |           | Adapter 1:  |
+          | NAT         |           | NAT         |
+          |-------------|           |-------------|
+          | Adapter 2:  |           | Adapter 2:  |
+          | LAB-NET     |<--------->| LAB-NET     |
+          | 192.168.56.10|          | 192.168.56.20|
+          +-------------+           +-------------+
+
+              🔒 Internal Network (LAB-NET)
+           - Subnet: 192.168.56.0/24
+           - Isolated from host and internet
+           - Used for pen testing, scanning, attacks
+
+
+
 
 ---
 
@@ -173,45 +207,6 @@ Each VM has **two adapters**:
 - One for **internal, isolated penetration testing** via **Internal Network: LAB-NET**
 
 ---
-
-## 🔧 Network Configuration Table
-
-| Component      | Adapter Type     | Network Name     | IP Address        | Purpose                                |
-|----------------|------------------|------------------|-------------------|----------------------------------------|
-| **Host PC**    | —                | —                | Dynamic (192.168.x.x) | Hosts VirtualBox; isolated from `LAB-NET` |
-| **Kali VM**    | Adapter 1: NAT   | NAT              | DHCP (dynamic)    | Internet access for tools/updates     |
-|                | Adapter 2: Internal | LAB-NET       | `192.168.56.10`   | Isolated attacker interface           |
-| **Windows VM** | Adapter 1: NAT   | NAT              | DHCP (dynamic)    | Internet for patching, RDP, etc.      |
-|                | Adapter 2: Internal | LAB-NET       | `192.168.56.20`   | Target machine, pentesting surface    |
-| **LAB-NET**    | Internal Only    | LAB-NET          | `192.168.56.0/24` | No internet, no host access           |
-
----
-                    +----------------------+
-                    |      Host PC         |
-                    | (VirtualBox Host)    |
-                    +----------------------+
-                   [Internet Access via NAT]
-                      (hosted by VirtualBox)
-                              |
-                 +------------+------------+
-                 |                         |
-          +-------------+           +-------------+
-          |   Kali VM   |           | Windows VM  |
-          |-------------|           |-------------|
-          | Adapter 1:  |           | Adapter 1:  |
-          | NAT         |           | NAT         |
-          |-------------|           |-------------|
-          | Adapter 2:  |           | Adapter 2:  |
-          | LAB-NET     |<--------->| LAB-NET     |
-          | 192.168.56.10|          | 192.168.56.20|
-          +-------------+           +-------------+
-
-              🔒 Internal Network (LAB-NET)
-           - Subnet: 192.168.56.0/24
-           - Isolated from host and internet
-           - Used for pen testing, scanning, attacks
-
-
 
 
 ---
