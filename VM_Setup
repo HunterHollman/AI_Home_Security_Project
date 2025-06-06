@@ -1,0 +1,91 @@
+# 🏠 Building My Home Cybersecurity Lab
+
+### By Hunter Hollman
+
+---
+
+## 🚀 **Project Overview**
+
+I’m building a home cybersecurity lab to:
+
+- Develop hands-on skills in **firewall management** and **penetration testing**
+- Create a basic **Security Operations Center (SOC)**
+- Simulate **attack and defense scenarios** in a safe, isolated environment
+
+This guide details how I set up two VirtualBox VMs (Kali Linux and Windows 10 Pro), configured networking, and tested connectivity — including the challenges I faced and solutions I found.
+
+---
+
+## 🖥️ **VM Setup**
+
+| VM Name      | Role              | Network Adapters              | IP Address         |
+|--------------|-------------------|-------------------------------|--------------------|
+| Kali Linux   | Attack Machine    | Adapter 1: NAT (Internet)     | 192.168.56.10      |
+|              |                   | Adapter 2: Internal Network   |                    |
+| Windows 10   | Target Machine    | Adapter 1: NAT (Internet)     | 192.168.56.20      |
+|              |                   | Adapter 2: Internal Network   |                    |
+
+**Notes:**
+
+- **Adapter 1 (NAT):** Provides internet access for updates/tools.
+- **Adapter 2 (Internal Network named `LAB-NET`):** Isolates VMs for secure interaction.
+
+---
+
+## ⚙️ **Configuring Static IPs**
+
+### Kali Linux
+
+1. Open terminal and find the internal interface name:
+   ```bash
+   ip a
+
+Assign IP and activate interface 
+
+sudo ip addr add 192.168.56.10/24 dev eth1
+sudo ip link set eth1 up
+
+Windows 10
+Right-click → Properties → Select Internet Protocol Version 4 (TCP/IPv4) → Properties.
+
+Set static IP:
+
+IP address: 192.168.56.20
+
+Subnet mask: 255.255.255.0
+
+Leave gateway and DNS blank
+
+____________________________________
+
+🧪 Testing Connectivity
+Step 1: Ping Test from Kali
+bash
+Copy
+Edit
+ping 192.168.56.20
+Result:
+❌ No reply (0 received) — Windows blocked ICMP Echo Requests by default.
+
+Step 2: Fix Windows Firewall to Allow Ping
+Open Windows Defender Firewall with Advanced Security.
+
+Go to Inbound Rules.
+
+Find File and Printer Sharing (Echo Request - ICMPv4-In).
+
+Right-click and Enable for Private and All Profiles.
+
+After enabling:
+✅ Ping replies received — connectivity confirmed.
+
+🔎 Exploring with Nmap
+Ran this from Kali to scan Windows:
+
+nmap -sS -sV 192.168.56.20
+Discover open ports and services.
+
+Prepare for more advanced penetration testing.
+
+
+
