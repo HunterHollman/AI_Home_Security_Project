@@ -26,25 +26,45 @@ This isn't just for show — this system protects my home network and acts as a 
 ## Architecture Overview
 
 ```
-                +-----------------+
-                |     Modem       |
-                +--------+--------+
-                         |
-                  [WAN Interface]
-                         |
-                 +-------+-------+
-                 |     pfSense   |
-                 +-------+-------+
-                         |
-          +--------------+--------------+
-          |                             |
-   [Trusted VLAN]                 [IoT VLAN]
-   (Desktops, Phones)           (Cameras, TV, Smart Devices)
+                    +-----------------------+
+                    |     Host PC (Laptop)  |
+                    |  Running VirtualBox   |
+                    +-----------+-----------+
+                                |
+                 +--------------+----------------+
+                 |                               |
+         +-------+-------+               +-------+-------+
+         |   Kali Linux   |              |  Windows 10    |
+         |  (Pen Tester)  |              | (Target System)|
+         +-------+--------+              +--------+-------+
+                 |                               |
+           [Internal Adapter]              [Internal Adapter]
+                 |                               |
+               [LAB-NET Internal Network (192.168.56.0/24)]
+                                |
+                        +------------------+
+                        |  Optional pfSense |
+                        |  or Virtual IDS   |
+                        +------------------+
+                                |
+                      +-----------------------+
+                      |  Suricata / Wazuh IDS |
+                      |  Logs sent via Syslog |
+                      +-----------------------+
+                                |
+                      +-------------------------+
+                      |     AI Rule Engine      |
+                 | (Bigdata SOC AI or fine-tuned LLM) |
+                      +-----------+-------------+
+                                  |
+                     +------------+------------+
+                     |    Alert Summarizer     |
+                     |  (e.g., Python script)  |
+                     +------------+------------+
+                                  |
+                          [Notification Bot]
+                      (Telegram / Discord / Slack)
 
-         |
-   [Syslog → ELK Stack]
-         |
-   [AI Alert Summarizer → Notification Bot]
 ```
 
 ---
