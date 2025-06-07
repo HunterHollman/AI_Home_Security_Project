@@ -19,3 +19,45 @@ I simulated a Layer 7 HTTP-based DoS attack using Kali Linux to overwhelm my Pyt
 - Helped validate port scanning and load-handling weaknesses.
 
 This demonstrated how easily lightweight HTTP servers can be disrupted — and why detection and rate-limiting are key in any secure network stack.
+
+Detection: Traffic spike observed in Wireshark; useful for testing future IDS rules.
+
+2. 🔍 Port Scanning & Enumeration
+Objective: Map open ports and services on the Windows target.
+
+Tools: nmap, nmap -Pn, curl
+
+Initial Issue: Windows Firewall blocked ICMP, making default Nmap scans fail.
+
+Fix: Used nmap -Pn to bypass ping and directly scan ports.
+
+Outcome: Discovered open ports (135, 139, 445) after disabling the firewall temporarily, confirming SMB and RPC services.
+
+3. 🌐 HTTP Server Authentication Brute Force
+Objective: Simulate brute-force attacks on a basic-auth protected HTTP server.
+
+Target: Python web server with Base64 login protection.
+
+Tool: hydra
+
+Result: Successfully attempted credential brute-forcing, showcasing how weak or default passwords can be exploited.
+
+Remediation Insight: Password rate-limiting or WAF would mitigate this.
+
+4. 🛑 Ping/ICMP Blocking Test
+Issue: Initial Kali-to-Windows scans failed due to ICMP Echo Request blocks.
+
+Fix: Added Inbound Rule in Windows Firewall to allow ICMPv4.
+
+Insight: Demonstrated how host discovery is affected by firewall configurations.
+
+✅ Summary
+These attack simulations were instrumental in validating:
+
+My network isolation between host and guest VMs
+
+How vulnerable default services can be on Windows
+
+That simple tools like nmap and hydra are powerful for learning attacker TTPs (Tactics, Techniques, Procedures)
+
+The importance of monitoring, hardening, and layered defenses
