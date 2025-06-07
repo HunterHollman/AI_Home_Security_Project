@@ -3,3 +3,19 @@ Pen Testing
 - My Windows firewall is blocking ICMP ping, so normal Nmap scans fail the discovery step.
 - My Python HTTP server on port 8000 is running and reachable (curl proved it).
 - I use the `-Pn` flag to bypass ping blocks and scan ports directly.
+
+## ✅ Denial-of-Service (DoS) Test
+
+I simulated a Layer 7 HTTP-based DoS attack using Kali Linux to overwhelm my Python web server running on a Windows 10 VM.
+
+### Tools Used:
+- `slowloris`
+- `hping3`
+- `ab` (Apache Benchmark)
+
+### Results:
+- Server stopped responding to browser and curl requests.
+- Confirmed successful resource exhaustion.
+- Helped validate port scanning and load-handling weaknesses.
+
+This demonstrated how easily lightweight HTTP servers can be disrupted — and why detection and rate-limiting are key in any secure network stack.
