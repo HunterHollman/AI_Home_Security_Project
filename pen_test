@@ -1,0 +1,5 @@
+Pen Testing
+
+- My Windows firewall is blocking ICMP ping, so normal Nmap scans fail the discovery step.
+- My Python HTTP server on port 8000 is running and reachable (curl proved it).
+- I use the `-Pn` flag to bypass ping blocks and scan ports directly.
