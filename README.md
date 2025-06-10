@@ -155,7 +155,7 @@ This isn't just for show — this system protects my home network and acts as a 
 - Parses Suricata JSON logs
 - Groups by IP, alert type, severity
 - Flags potential threats (based on thresholds)
-- Summarizes results for Slack/email
+- Summarizes results for Teams/email
 
 ```bash
 python alert_summarizer.py /var/log/suricata/eve.json
