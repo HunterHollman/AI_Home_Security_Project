@@ -1,0 +1,168 @@
+# 🧠 AI-Powered Home SOC Lab  
+### Part 2: Building & Attacking a Custom Python Web Server
+
+This phase of my AI-Powered SOC Lab focuses on building a simple Python-based login website on a Windows VM and launching real penetration tests from a Kali VM. This simulates adversarial AI-vs-AI cybersecurity defense in a home lab environment.
+
+---
+
+## 🏗️ Architecture
+
+                     +------------------+
+                     |     Host PC      |
+                     |  VirtualBox Host |
+                     +--------+---------+
+                              |
+          +-------------------+-------------------+
+          |                                       |
+ +--------v--------+                     +--------v--------+
+ |   Windows VM    |                     |     Kali VM     |
+ | (Python Server) |                     | (Penetration)   |
+ +--------+--------+                     +--------+--------+
+          |                                       |
+  [ Internal Network Adapter ]           [ Internal Network Adapter ]
+          |                                       |
+    HTTP Server:8000                        Attacker Tools
+
+---
+
+## 📁 Folder Structure (Windows VM)
+
+C:\Users\HSocD\Documents\website
+│
+├── index.html # Homepage with link to login
+├── login.html # Basic login form
+├── admin.html # Admin-only protected page
+└── serve.py # Custom Python HTTP server
+
+
+---
+
+## 🖥️ HTML Pages
+
+### `index.html`
+```html
+<!DOCTYPE html>
+<html>
+<head><title>Home</title></head>
+<body>
+  <h1>Welcome to My Site</h1>
+  <a href="login.html">Login</a>
+</body>
+</html>
+________________________________________________________________
+login.html
+
+<!DOCTYPE html>
+<html>
+<head><title>Login</title></head>
+<body>
+  <h1>Login</h1>
+  <form action="/login" method="post">
+    Username: <input type="text" name="user"><br>
+    Password: <input type="password" name="pass"><br>
+    <input type="submit" value="Submit">
+  </form>
+</body>
+</html>
+
+________________________________________________________________
+admin.html
+
+<!DOCTYPE html>
+<html>
+<head><title>Admin</title></head>
+<body>
+  <h1>Welcome Admin</h1>
+</body>
+</html>
+________________________________________________________________
+🐍 Python Server — serve.py
+import http.server
+import socketserver
+import os
+
+PORT = 8000
+
+class CustomHandler(http.server.SimpleHTTPRequestHandler):
+    def do_POST(self):
+        if self.path == "/login":
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length).decode('utf-8')
+            creds = dict(x.split('=') for x in post_data.split('&'))
+
+            username = creds.get('user')
+            password = creds.get('pass')
+
+            if username == 'admin' and password == '1234':
+                self.send_response(301)
+                self.send_header('Location', '/admin.html')
+                self.end_headers()
+            else:
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                self.wfile.write(b"<script>alert('Wrong username or password'); window.location.href='login.html';</script>")
+        else:
+            super().do_POST()
+
+os.chdir(r'C:\Users\HSocD\Documents\website')
+with socketserver.TCPServer(("", PORT), CustomHandler) as httpd:
+    print(f"Serving at port {PORT}")
+    httpd.serve_forever()
+
+
+⚙️ Issues & Fixes
+| Problem                   | Solution                             |
+| ------------------------- | ------------------------------------ |
+| `.html.txt` extensions    | Unhid file extensions and renamed    |
+| `unicodeescape` error     | Used raw path string: `r'C:\path'`   |
+| `AttributeError`          | Fixed missing methods in handler     |
+| `404` errors              | Renamed files and matched references |
+| Directory listing visible | Added `index.html`                   |
+
+🌐 Accessing From Kali
+Windows VM IP: 192.168.56.20
+
+Kali VM IP: 192.168.56.10
+
+ping 192.168.56.20
+curl http://192.168.56.20:8000
+
+❌ Nmap Discovery (ICMP Blocked)
+nmap -Pn -p 8000 192.168.56.20
+
+🔐 Brute Force Attempt (Hydra)
+hydra -l admin -P /usr/share/wordlists/rockyou.txt \
+192.168.56.20 http-post-form \
+"/login:user=^USER^&pass=^PASS^:Wrong" -V
+
+⚠️ Issues:
+
+Needed to unzip wordlist:
+sudo gunzip /usr/share/wordlists/rockyou.txt.gz
+
+🔍 Directory Discovery (Dirb)
+
+dirb http://192.168.56.20:8000
+✅ Found:
+
+/index.html
+
+/login.html
+
+/admin.html
+
+✅ Summary
+I built a basic login site with Python and HTML hosted on Windows.
+
+Kali VM scanned and tested for weaknesses.
+
+HTTP server was accessible from Kali using curl.
+
+Nmap required -Pn due to ICMP ping being blocked.
+
+Hydra brute-force failed, simulating a successful defense.
+
+Dirb confirmed endpoint visibility.
+
+All attack logs are part of the broader simulation for future AI defenders.
