@@ -1,0 +1,137 @@
+# 🧠 AI-Powered Intrusion Detection System in Windows | Home SOC Project
+
+This part of the **AI-Driven Home SOC** project showcases how to build a lightweight **AI detection system** that monitors real-time network logs from Suricata, analyzes them using a trained machine learning model, and alerts on threats.
+
+---
+
+## 📌 Project Scope
+
+- Install and configure Suricata on a Windows 10 Pro VM.
+- Monitor traffic using an internal network interface.
+- Enable Suricata to log alerts and flow data to `eve.json`.
+- Use a Python AI bot to read the logs and detect suspicious behavior.
+- Test detection using common attacker tools (e.g., Nmap).
+- Confirm detections using live terminal feedback.
+
+---
+
+## 🖥️ System Details
+
+- **Host**: Windows 10 Pro VM
+- **Network**: Internal Adapter (connected to Kali attacker VM)
+- **Suricata Version**: 7.x
+- **Python**: 3.11+
+- **Log File Path**: `C:\ProgramData\Suricata\logs\eve.json`
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Install Suricata
+
+- Download Suricata for Windows from [https://suricata.io/download](https://suricata.io/download)
+- Install to `C:\Program Files\Suricata`
+- Verify with:
+  ```cmd
+  suricata.exe -V
+___________________________________
+2. Configure Logging to JSON
+Edit the suricata.yaml file to enable EVE JSON output:
+
+yaml
+Copy
+Edit
+outputs:
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: C:\ProgramData\Suricata\logs\eve.json
+      types:
+        - alert
+        - http
+        - dns
+        - flow
+⚠️ Make sure eve.json exists and has write permissions.
+3. Find Your Interface
+Run:
+suricata.exe -i
+Copy the appropriate network interface name (e.g., Ethernet 2) and use it in the next step.
+
+4. Start Suricata
+
+suricata.exe -i "Ethernet 2" -c suricata.yaml -l C:\ProgramData\Suricata\logs
+Suricata now logs all network alerts to eve.json.
+
+
+_________________________________
+🤖 Set Up the AI Detection Bot
+5. Train Basic AI Model (optional if one exists)
+
+from sklearn.ensemble import RandomForestClassifier
+import pandas as pd
+import joblib
+
+df = pd.read_csv("network_data.csv")  # your labeled dataset
+X = df.drop("label", axis=1)
+y = df["label"]
+clf = RandomForestClassifier().fit(X, y)
+joblib.dump(clf, "trained_model.joblib")
+
+_________________________________
+6. Create Live Detection Script
+import json
+import time
+import joblib
+
+clf = joblib.load("trained_model.joblib")
+log_path = "C:\\ProgramData\\Suricata\\logs\\eve.json"
+
+def extract_features(entry):
+    # Simplified example
+    return [len(entry.get("src_ip", "")), len(entry.get("dest_ip", "")), entry.get("flow", {}).get("pkts_toserver", 0)]
+
+print("🧠 AI Intrusion Detection Running...")
+with open(log_path, "r") as f:
+    f.seek(0, 2)
+    while True:
+        line = f.readline()
+        if not line:
+            time.sleep(1)
+            continue
+        try:
+            event = json.loads(line)
+            if "alert" in event:
+                features = extract_features(event)
+                prediction = clf.predict([features])
+                if prediction[0] == "attack":
+                    print(f"[⚠️ ALERT] Detected Threat from {event['src_ip']} to {event['dest_ip']}")
+        except Exception as e:
+            continue
+______________________________________
+
+🔍 Testing the System
+🧪 Penetration Tests Performed
+
+| Tool     | Command Example                                               | Result                      |
+| -------- | ------------------------------------------------------------- | --------------------------- |
+| Nmap SYN | `nmap -Pn -sS 192.168.56.20`                                  | ✅ Detected in logs          |
+| Nmap TCP | `nmap -sT -p 1-1000 -Pn 192.168.56.20`                        | ✅ Detected in logs          |
+| Version  | `nmap -sV -Pn 192.168.56.20`                                  | ✅ Detected in logs          |
+| Hydra    | `hydra -l admin -P wordlist.txt 192.168.56.20 http-post-form` | ✅ Flagged on brute attempts |
+| Dirb     | `dirb http://192.168.56.20`                                   | ✅ HTTP traffic flagged      |
+
+🔍 All test cases were successfully logged in eve.json and processed by the AI detection system.
+
+📂 Log Location
+All detection and network data is written to:
+C:\ProgramData\Suricata\logs\eve.json
+
+✅ Final Result
+The AI detection bot successfully flagged real-time threats.
+
+All scans and brute-force attempts were caught and printed live.
+
+Logs confirmed attacks using Suricata's alert system and enriched them with ML logic.
+
+
+
