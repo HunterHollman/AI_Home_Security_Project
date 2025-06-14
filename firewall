@@ -1,0 +1,126 @@
+🛡️ pfSense Firewall Setup for AI-Powered Home SOC Lab
+This guide documents how I set up pfSense as the firewall and router in my AI-driven home cybersecurity lab. The goal is to create a segmented, secure, and monitorable internal network for attack/defense simulations.
+
+📦 Environment Overview
+Host OS: Windows 11
+
+Hypervisor: VirtualBox
+
+VMs:
+
+pfSense — acts as firewall/router
+
+Windows 10 Pro — target machine with Python web server
+
+Kali Linux — attacker machine
+
+🌐 Virtual Network Design
+VM	Adapter 1 (WAN)	Adapter 2 (LAN/Internal)
+pfSense	NAT	Internal Network (LAB-NET)
+Windows 10	NAT	Internal Network (LAB-NET)
+Kali Linux	NAT	Internal Network (LAB-NET)
+
+🚀 Step-by-Step pfSense Setup
+1. 🔽 Download pfSense ISO
+Visit: https://www.pfsense.org/download/
+
+Choose:
+
+Architecture: AMD64 (64-bit)
+
+Installer: CD Image (ISO) Installer
+
+Mirror: Choose closest
+
+Save the .iso to your local machine
+
+2. 🖥️ Create pfSense VM in VirtualBox
+OS Type: BSD > FreeBSD (64-bit)
+
+RAM: 1–2GB
+
+Create VHD (20GB+)
+
+Network Settings:
+Adapter 1 (WAN):
+
+Attached to: NAT
+
+Adapter 2 (LAN):
+
+Attached to: Internal Network
+
+Name: LAB-NET
+
+3. 💿 Boot and Install pfSense
+Attach the .iso to the VM's optical drive
+
+Boot the VM and follow the installer
+
+Select default options until prompted for interface setup
+
+4. 🔌 Network Interface Assignment
+Assign em0 to WAN (NAT)
+
+Assign em1 to LAN (Internal Network)
+
+Complete installation, reboot
+
+5. 🌐 LAN IP Setup
+After boot, configure LAN manually:
+
+vbnet
+Copy
+Edit
+Option 2) Set interface IP
+Enter interface to configure: em1
+Configure IPv4: y
+IP: 192.168.56.1
+Subnet: 24 (255.255.255.0)
+Gateway: [leave blank]
+Enable DHCP: y
+DHCP Range: 192.168.56.100 - 192.168.56.200
+Enable IPv6: n
+🧠 Why This Matters
+pfSense will now route all internal traffic, assign IPs, and act as the firewall.
+
+We’ll later:
+
+Add Suricata IDS/IPS
+
+Create VLAN segmentation
+
+Enable logging + ELK stack
+
+Build AI-based traffic analysis tools
+
+🌍 Accessing pfSense Web GUI
+From Windows VM (or any internal machine):
+
+Set static IP (e.g. 192.168.56.10, subnet 255.255.255.0, gateway 192.168.56.1)
+
+Open browser:
+
+cpp
+Copy
+Edit
+https://192.168.56.1
+Login:
+
+makefile
+Copy
+Edit
+Username: admin
+Password: pfsense
+🧪 Troubleshooting
+❌ Can't Access GUI?
+
+Ensure both pfSense and client are on LAB-NET
+
+Ping 192.168.56.1 from Windows
+
+Disable Windows firewall temporarily if needed
+
+❌ No IP assigned?
+
+Confirm DHCP is enabled in pfSense LAN config
