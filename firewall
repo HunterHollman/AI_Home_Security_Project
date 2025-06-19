@@ -70,8 +70,7 @@ Complete installation, reboot
 After boot, configure LAN manually:
 
 vbnet
-Copy
-Edit
+
 Option 2) Set interface IP
 Enter interface to configure: em1
 Configure IPv4: y
@@ -81,7 +80,7 @@ Gateway: [leave blank]
 Enable DHCP: y
 DHCP Range: 192.168.56.100 - 192.168.56.200
 Enable IPv6: n
-🧠 Why This Matters
+ Why This Matters
 pfSense will now route all internal traffic, assign IPs, and act as the firewall.
 
 We’ll later:
@@ -94,16 +93,14 @@ Enable logging + ELK stack
 
 Build AI-based traffic analysis tools
 
-🌍 Accessing pfSense Web GUI
+ Accessing pfSense Web GUI
 From Windows VM (or any internal machine):
 
 Set static IP (e.g. 192.168.56.10, subnet 255.255.255.0, gateway 192.168.56.1)
 
 Open browser:
 
-cpp
-Copy
-Edit
+
 https://192.168.56.1
 Login:
 
@@ -112,15 +109,10 @@ Copy
 Edit
 Username: admin
 Password: pfsense
-🧪 Troubleshooting
-❌ Can't Access GUI?
 
 Ensure both pfSense and client are on LAB-NET
 
 Ping 192.168.56.1 from Windows
 
-Disable Windows firewall temporarily if needed
-
-❌ No IP assigned?
 
 Confirm DHCP is enabled in pfSense LAN config
