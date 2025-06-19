@@ -44,8 +44,28 @@ logging:
 default-rule-path: C:\\Program Files\\Suricata\\rules
 rule-files:
   - local.rules
+________________________________________________________________
+suricata.yaml (key sections shown)
+yaml
 
+default-log-dir: "C:\\ProgramData\\Suricata\\logs"
 
+logging:
+  outputs:
+    - eve-log:
+        enabled: yes
+        filetype: regular
+        filename: C:\\ProgramData\\Suricata\\logs\\eve.json
+        types:
+          - alert
+          - flow
+          - dns
+          - http
+
+default-rule-path: C:\\Program Files\\Suricata\\rules
+rule-files:
+  - local.rules
+__________________________________________________________________
 Interface Setup
 
 Identify interfaces with:
@@ -112,7 +132,18 @@ if __name__ == "__main__":
 
 
 
+AI Integration
+AI was used to:
 
+Debug Suricata rule loading errors
+
+Design the Discord bot architecture
+
+Tail Suricata logs with smart filtering logic
+
+Structure and test edge-case traffic
+
+Assist with error handling and test cases
 7. Known Issues & Fixes
 
 Issue
