@@ -1,0 +1,159 @@
+AI-Powered Home IDS with Suricata and Discord Integration
+
+Overview
+
+This project demonstrates a fully operational home-based Intrusion Detection System (IDS) using Suricata, integrated with a Discord bot for real-time alerts. The setup leverages AI-enhanced rule management, custom scripting, and tailored alerting logic for non-statistical network events.
+
+Highlights
+
+Suricata configured on Windows for real-time packet analysis.
+
+Discord bot integration to send flow-based alerts.
+
+Custom Python scripts to parse Suricata's eve.json log.
+
+Focused detection of specific targets or any network activity excluding stats.
+
+AI-assisted development and troubleshooting.
+
+File Structure
+project-root/
+├── suricata.yaml                 # Suricata configuration file
+├── local.rules                   # Custom Suricata rule set
+├── flow_alert_bot.py            # Main bot script to monitor and alert
+├── test_webhook.py              # Script to test Discord webhook
+├── requirements.txt             # Python dependencies
+
+1. Suricata Configuration
+
+suricata.yaml (Windows Compatible)
+default-log-dir: "C:\\ProgramData\\Suricata\\logs"
+
+logging:
+  outputs:
+    - eve-log:
+        enabled: yes
+        filetype: regular
+        filename: C:\\ProgramData\\Suricata\\logs\\eve.json
+        types:
+          - alert
+          - flow
+          - dns
+          - http
+
+default-rule-path: C:\\Program Files\\Suricata\\rules
+rule-files:
+  - local.rules
+
+
+Interface Setup
+
+Identify interfaces with:
+Get-NetAdapter
+
+Start Suricata:
+suricata.exe -c suricata.yaml -i "Ethernet 2"
+
+
+
+2. Custom Rule Example
+
+local.rules
+alert icmp any any -> any any (msg:"ICMP Packet Detected"; sid:1000001; rev:1;)
+SID must be unique, and file should be UTF-8 encoded.
+
+3. Discord Webhook Test Script
+import requests
+
+WEBHOOK_URL = "https://discord.com/api/webhooks/YOUR_WEBHOOK"
+message = {"content": "✅ Webhook test successful."}
+response = requests.post(WEBHOOK_URL, json=message)
+print(response.status_code, response.text)
+
+4. Live Event Monitoring Script
+
+import json
+import time
+import requests
+
+WEBHOOK_URL = "https://discord.com/api/webhooks/YOUR_WEBHOOK"
+EVE_LOG_PATH = r"C:\\ProgramData\\Suricata\\logs\\eve.json"
+
+def send_discord_alert(event):
+    message = (
+        f"🚨 **Suricata Event** 🚨\n"
+        f"Type: {event.get('event_type')}\n"
+        f"Source: {event.get('src_ip')}:{event.get('src_port')}\n"
+        f"Destination: {event.get('dest_ip')}:{event.get('dest_port')}\n"
+    )
+    try:
+        requests.post(WEBHOOK_URL, json={"content": message})
+    except Exception as e:
+        print(f"[!] Discord error: {e}")
+
+def tail_eve():
+    print("[*] Watching Suricata events (excluding stats)...")
+    with open(EVE_LOG_PATH, "r", encoding="utf-8") as f:
+        f.seek(0, 2)  # EOF
+        while True:
+            line = f.readline()
+            if not line:
+                time.sleep(1)
+                continue
+            try:
+                event = json.loads(line)
+                if event.get("event_type") != "stats":
+                    send_discord_alert(event)
+            except json.JSONDecodeError:
+                continue
+
+if __name__ == "__main__":
+    tail_eve()
+
+
+
+
+7. Known Issues & Fixes
+
+Issue
+
+Fix
+
+Permission denied for logs
+
+Run terminal as Administrator
+
+Duplicate SID
+
+Ensure unique SIDs in local.rules
+
+405 Method Not Allowed
+
+Recreate webhook or verify full URL
+
+No alerts firing
+
+Check rule paths and interface matching
+
+
+Future Plans
+
+Add AI to generate custom Suricata rules on suspicious behavior.
+
+Integrate with ELK stack for visualizations.
+
+Multi-platform (Linux) support.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
