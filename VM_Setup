@@ -4,7 +4,7 @@
 
 ---
 
-## 🚀 **Project Overview**
+##  **Project Overview**
 
 
 
@@ -16,7 +16,7 @@ This guide details how I set up the two VirtualBox VMs (Kali Linux and Windows 1
 
 ---
 
-## 🖥️ **VM Setup**
+## 🖥 **VM Setup**
 
 | VM Name      | Role              | Network Adapters              | IP Address         |
 |--------------|-------------------|-------------------------------|--------------------|
@@ -33,7 +33,7 @@ I needed isolated networks with different IP's but can communicate and have acce
 
 ---
 
-## ⚙️ **Configuring Static IPs**
+## **Configuring Static IPs**
 
 ### Kali Linux
 
@@ -78,19 +78,19 @@ Right-click and Enable for Private and All Profiles.
 After enabling:
 ✅ Ping replies received — connectivity confirmed.
 
-🔎 Exploring with Nmap
+ Exploring with Nmap
 Ran this from Kali to scan Windows:
 
 nmap -sS -sV 192.168.56.20
 Discover open ports and services.
 
-# 🔍 Windows VM Port Scanning & Firewall Discovery – Home SOC Lab
+#  Windows VM Port Scanning & Firewall Discovery – Home SOC Lab
 
 After setting up my home cybersecurity lab with a Kali Linux attacker VM and a Windows 10 Pro target VM (both on VirtualBox using an **internal network named `LAB-NET`**), I moved on to scanning the Windows machine for open ports using Nmap.
 
 ---
 
-## ⚙️ Network Setup Recap
+##  Network Setup Recap
 
 - **Kali VM IP:** `192.168.56.10`
 - **Windows VM IP:** `192.168.56.20`
@@ -102,7 +102,7 @@ Both VMs were confirmed to be communicating via ping after adjusting Windows Fir
 
 ---
 
-## 📌 Initial Nmap Scan
+##  Initial Nmap Scan
 
 Ran the following from Kali:
 
