@@ -187,23 +187,7 @@ python alert_summarizer.py /var/log/suricata/eve.json
 
 ---
 
-## 🗂️ Repo Structure
 
-```
-/config/
-    pfSense_rules.xml
-    suricata_custom.rules
-    elastic_pipeline.conf
-/scripts/
-    alert_summarizer.py
-    send_alerts.py
-/diagrams/
-    home_soc_architecture.png
-docs/
-    prompts.md
-    ir_playbooks.md
-README.md
-```
 
 ---
 
