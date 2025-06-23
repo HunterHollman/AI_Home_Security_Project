@@ -43,13 +43,13 @@ This isn't just for show — this system protects my home network and acts as a 
                [LAB-NET Internal Network (192.168.56.0/24)]
                                 |
                         +------------------+
-                        |  Optional pfSense |
-                        |  or Virtual IDS   |
+                        |     pfSense      |
+                        |    Virtual IDS   |
                         +------------------+
                                 |
                       +-----------------------+
-                      |  Suricata / Wazuh IDS |
-                      |  Logs sent via Syslog |
+                      |  Suricata              |
+                   |   Logs sent via Syslog/eve |
                       +-----------------------+
                                 |
                       +-------------------------+
@@ -59,11 +59,11 @@ This isn't just for show — this system protects my home network and acts as a 
                                   |
                      +------------+------------+
                      |    Alert Summarizer     |
-                     |  (e.g., Python script)  |
+                     |  (  Python script)  |
                      +------------+------------+
                                   |
                           [Notification Bot]
-                      (Telegram / Discord / Slack)
+                      (Telegram / Discord / Teams)
 
 ```
 
